@@ -18,6 +18,7 @@
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0}
 html,body{height:100%;margin:0}
+body{height:100dvh}
 body{background:var(--bg);color:var(--ink);font:16px/1.5 Mulish,system-ui,sans-serif;display:grid;grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden}
 .top{display:flex;align-items:center;gap:12px;padding:10px max(16px,3vw);background:var(--bar);border-bottom:1px solid var(--line)}
 .top img{width:38px;height:38px;border-radius:50%}
@@ -27,19 +28,21 @@ body{background:var(--bg);color:var(--ink);font:16px/1.5 Mulish,system-ui,sans-s
 #stage{position:relative;display:grid;place-items:center;overflow:hidden;perspective:2400px;touch-action:pan-y;user-select:none}
 #book{position:relative;transition:transform .7s ease;transform-style:preserve-3d}
 .leaf{position:absolute;top:0;transform-style:preserve-3d;transform-origin:left center;transition:transform .9s cubic-bezier(.45,.05,.3,1);cursor:pointer}
-.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:#fff;color:#10224f;overflow:hidden;box-shadow:0 .4em 1.6em rgba(5,20,60,.22)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:#fff;color:#10224f;overflow:hidden;box-shadow:0 .5em 1.2em -.5em rgba(5,20,60,.3)}
 .face.back{transform:rotateY(180deg)}
 .face.blank{background:none;box-shadow:none}
 .face.r::after,.face.l::after{content:"";position:absolute;inset:0;pointer-events:none}
-.face.r::after{background:linear-gradient(90deg,rgba(0,20,60,.18),rgba(0,20,60,0) 7%)}
-.face.l::after{background:linear-gradient(270deg,rgba(0,20,60,.2),rgba(0,20,60,0) 7%)}
+.face.r::after{background:linear-gradient(90deg,rgba(0,20,60,.07),rgba(0,20,60,0) 3.5%)}
+.face.l::after{background:linear-gradient(270deg,rgba(0,20,60,.08),rgba(0,20,60,0) 3.5%)}
 .ctrl{display:flex;align-items:center;gap:12px;padding:10px max(16px,3vw);background:var(--bar);border-top:1px solid var(--line)}
 .ctrl button{font:700 15px Mulish,sans-serif;min-height:44px;padding:0 16px;border-radius:22px;border:1.5px solid var(--line);background:none;color:var(--ink);cursor:pointer;white-space:nowrap}
 .ctrl button:hover{border-color:var(--teal)}
 .ctrl button:focus-visible,#jump:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
 .ctrl button.main{background:var(--navy);border-color:var(--navy);color:#fff}
 #jump{flex:1;accent-color:var(--teal);height:44px}
-@media(max-width:600px){.top span{display:none}.ctrl{gap:8px}.ctrl .sum{display:none}.ctrl button{padding:0 14px}}
+.ctrl{padding-bottom:max(10px,env(safe-area-inset-bottom))}
+@media(max-width:600px){.top{padding-block:8px}.top img{width:32px;height:32px}.top span{display:none}.ctrl{gap:8px;padding-inline:12px}.ctrl .sum{display:none}.ctrl button{padding:0 14px}}
+@media(max-width:380px){.ctrl .lbl{display:none}.ctrl button{min-width:44px;padding:0 12px;font-size:18px}}
 /* page content, sized in em from the page width */
 .pg{position:absolute;inset:0;padding:1.9em 1.8em 1.3em;display:flex;flex-direction:column}
 .pfoot{margin-top:auto;flex:none;display:flex;justify-content:space-between;align-items:center;font-size:.72em;color:#5b6c92;border-top:1px solid #e1e8f3;padding-top:.6em}
@@ -101,10 +104,10 @@ ul.spec li::before{content:"";position:absolute;left:0;top:.38em;width:.75em;hei
 <header class="top"><img src="logo.jpg" alt="Logo MCKMED"><b>MCKMED</b><span>Catálogo de produtos</span><div class="ind" id="ind">Capa</div></header>
 <main id="stage" aria-label="Catálogo folheável"><div id="book"></div></main>
 <nav class="ctrl">
-<button id="prev" aria-label="Página anterior">‹ Anterior</button>
+<button id="prev" aria-label="Página anterior">‹<span class="lbl"> Anterior</span></button>
 <button class="sum" id="sum">Sumário</button>
 <input type="range" id="jump" min="0" max="6" value="0" aria-label="Ir para a página">
-<button id="next" class="main" aria-label="Próxima página">Próxima ›</button>
+<button id="next" class="main" aria-label="Próxima página"><span class="lbl">Próxima </span>›</button>
 </nav>
 <script>
 {
@@ -234,10 +237,12 @@ function build(){
  const hp=Math.max(200,(H-32)/RATIO);
  const sp=Math.min(hp,(W-48)/2);
  const nsp=sp>=300;
- const npw=Math.floor(nsp?sp:Math.min(hp,W-32));
- if(nsp===spread&&npw===pw&&leaves.length)return;
- spread=nsp;pw=npw;ph=Math.round(pw*RATIO);
- book.style.width=(spread?pw*2:pw)+'px';book.style.height=ph+'px';book.style.fontSize=(pw/26)+'px';
+ const npw=Math.floor(nsp?sp:Math.min(hp,W-24));
+ // on a phone the single page grows taller to fill the screen, so the text can be larger
+ const nph=Math.round(nsp?npw*RATIO:Math.min(H-24,npw*1.8));
+ if(nsp===spread&&npw===pw&&nph===ph&&leaves.length)return;
+ spread=nsp;pw=npw;ph=nph;
+ book.style.width=(spread?pw*2:pw)+'px';book.style.height=ph+'px';book.style.fontSize=(spread?pw/26:Math.min(pw/24,ph/RATIO/26))+'px';
  book.innerHTML='';leaves=[];
  L=spread?P.length/2:P.length;
  for(let i=0;i<L;i++){
