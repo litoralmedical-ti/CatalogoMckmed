@@ -25,8 +25,9 @@ body{background:var(--bg);color:var(--ink);font:16px/1.5 Mulish,system-ui,sans-s
 .top b{font:800 17px/1 Montserrat,sans-serif;color:light-dark(var(--navy),#fff)}
 .top span{font-size:14px;opacity:.75}
 .top .ind{margin-left:auto;font-weight:700;font-size:14px;white-space:nowrap}
-#stage{position:relative;display:grid;place-items:center;overflow:hidden;perspective:2400px;touch-action:pan-y;user-select:none}
-#book{position:relative;transition:transform .7s ease;transform-style:preserve-3d}
+#stage{position:relative;display:grid;place-items:center;overflow:hidden;touch-action:pan-y;user-select:none}
+/* book stays flat so leaves stack by z-index; in a shared 3D context coplanar pages z-fight and flicker on phones */
+#book{position:relative;transition:transform .7s ease;perspective:2400px}
 .leaf{position:absolute;top:0;transform-style:preserve-3d;transform-origin:left center;transition:transform .9s cubic-bezier(.45,.05,.3,1);cursor:pointer}
 .face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:#fff;color:#10224f;overflow:hidden;box-shadow:0 .5em 1.2em -.5em rgba(5,20,60,.3)}
 .face.back{transform:rotateY(180deg)}
