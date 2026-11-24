@@ -1,0 +1,19 @@
+COMO COLOCAR AS FOTOS REAIS NO CATÁLOGO MCKMED
+================================================
+
+1. Crie uma pasta chamada  fotos  aqui, ao lado do index.html.
+2. Salve a foto de cada produto nela com exatamente estes nomes:
+
+   polifix.jpg       -> Polifix 2 vias com clamp
+   luva.jpg          -> Luva cirúrgica estéril de látex
+   jelco.jpg         -> Cateter jelco 20G e 22G
+   torneirinha.jpg   -> Torneirinha 3 vias
+   eletrodo.jpg      -> Eletrodo descartável para ECG
+   equipo.jpg        -> Equipo macrogotas
+
+3. Abra o index.html de novo. A foto entra no lugar da ilustração.
+   Se uma foto estiver faltando, aquele produto continua mostrando a ilustração.
+
+Dicas: use fundo branco ou claro, com o produto inteiro aparecendo.
+Use foto horizontal, com cerca de 1200 px de largura.
+Use só fotos suas ou fotos do fornecedor com autorização de uso.
