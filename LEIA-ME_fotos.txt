@@ -1,19 +1,33 @@
-COMO COLOCAR AS FOTOS REAIS NO CATÁLOGO MCKMED
-================================================
+CATÁLOGO MCKMED - COMO ESTÁ ORGANIZADO
+======================================
 
-1. Crie uma pasta chamada  fotos  aqui, ao lado do index.html.
-2. Salve a foto de cada produto nela com exatamente estes nomes:
+index.html            -> página principal (só a estrutura)
+css/catalogo.css      -> cores, fontes e layout
+js/produtos.js        -> PRODUTOS, categorias e contato  <- edite aqui
+js/paginas.js         -> monta as páginas a partir dos produtos
+js/livro.js           -> efeito de folhear
+js/ilustracoes.js     -> desenhos usados quando falta a foto
+fotos/                -> fotos dos produtos
+fotos/antigas/        -> fotos substituídas (backup)
 
-   polifix.jpg       -> Polifix 2 vias com clamp
-   luva.jpg          -> Luva cirúrgica estéril de látex
-   jelco.jpg         -> Cateter jelco 20G e 22G
-   torneirinha.jpg   -> Torneirinha 3 vias
-   eletrodo.jpg      -> Eletrodo descartável para ECG
-   equipo.jpg        -> Equipo macrogotas
+COMO TROCAR A FOTO DE UM PRODUTO
+1. Coloque a foto na pasta  fotos
+2. Em js/produtos.js, no produto, mude a linha  foto: 'nome-do-arquivo.jpg'
+   (aceita .jpg, .png ou .webp)
+3. Abra o index.html de novo.
+   Se a foto não for encontrada, aparece a ilustração no lugar.
 
-3. Abra o index.html de novo. A foto entra no lugar da ilustração.
-   Se uma foto estiver faltando, aquele produto continua mostrando a ilustração.
+Fotos atuais:
+   polifix.jpg        -> Polifix 2 vias com clamp
+   luva.jpg           -> Luva cirúrgica estéril de látex
+   jelco.jpg          -> Cateter jelco 20G e 22G
+   torneirinha.webp   -> Torneirinha 3 vias
+   eletrodo.jpg       -> Eletrodo descartável para ECG
+   equipo.jpg         -> Equipo macrogotas
+
+COMO ADICIONAR UM PRODUTO
+Copie um bloco { ... } em js/produtos.js, altere os textos e a foto.
+Sumário, números de página e totais são atualizados sozinhos.
 
 Dicas: use fundo branco ou claro, com o produto inteiro aparecendo.
-Use foto horizontal, com cerca de 1200 px de largura.
 Use só fotos suas ou fotos do fornecedor com autorização de uso.

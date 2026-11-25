@@ -1,304 +1,39 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Catálogo MCKMED</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Mulish:ital,wght@0,400;0,600;0,700;1,500&display=swap" rel="stylesheet">
-<style>
-/* VOICE everyday-commercial: a clean printed product catalogue for hospital buyers
-   IDEA a bound catalogue you leaf through, page by page, like the FlipHTML5 reference
-   PICTURE the open book itself; each product page carries a large drawn illustration
-   COLOUR MCKMED navy #0d2a6e, blue #1a5fd0, teal #13bfc3 on white paper; desk backdrop follows theme
-   TYPE Montserrat 800 (the logo's lettering) + Mulish
-   LAYOUT laptop: two-page spread centred; phone: single page with the same flip */
-:root{color-scheme:light dark;--bg:light-dark(#dfe7f1,#0a1330);--ink:light-dark(#10224f,#e6edf8);--bar:light-dark(#ffffff,#121d44);--line:light-dark(#c9d5e6,#26346a);--navy:#0d2a6e;--blue:#1a5fd0;--teal:#13bfc3}
-:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
-*{box-sizing:border-box;min-width:0}
-html,body{height:100%;margin:0}
-body{height:100dvh}
-body{background:var(--bg);color:var(--ink);font:16px/1.5 Mulish,system-ui,sans-serif;display:grid;grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden}
-.top{display:flex;align-items:center;gap:12px;padding:10px max(16px,3vw);background:var(--bar);border-bottom:1px solid var(--line)}
-.top img{width:38px;height:38px;border-radius:50%}
-.top b{font:800 17px/1 Montserrat,sans-serif;color:light-dark(var(--navy),#fff)}
-.top span{font-size:14px;opacity:.75}
-.top .ind{margin-left:auto;font-weight:700;font-size:14px;white-space:nowrap}
-#stage{position:relative;display:grid;place-items:center;overflow:hidden;touch-action:pan-y;user-select:none}
-/* book stays flat so leaves stack by z-index; in a shared 3D context coplanar pages z-fight and flicker on phones */
-#book{position:relative;transition:transform .7s ease;perspective:2400px}
-.leaf{position:absolute;top:0;transform-style:preserve-3d;transform-origin:left center;transition:transform .9s cubic-bezier(.45,.05,.3,1);cursor:pointer}
-.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:#fff;color:#10224f;overflow:hidden;box-shadow:0 .5em 1.2em -.5em rgba(5,20,60,.3)}
-.face.back{transform:rotateY(180deg)}
-.face.blank{background:none;box-shadow:none}
-.face.r::after,.face.l::after{content:"";position:absolute;inset:0;pointer-events:none}
-.face.r::after{background:linear-gradient(90deg,rgba(0,20,60,.07),rgba(0,20,60,0) 3.5%)}
-.face.l::after{background:linear-gradient(270deg,rgba(0,20,60,.08),rgba(0,20,60,0) 3.5%)}
-.ctrl{display:flex;align-items:center;gap:12px;padding:10px max(16px,3vw);background:var(--bar);border-top:1px solid var(--line)}
-.ctrl button{font:700 15px Mulish,sans-serif;min-height:44px;padding:0 16px;border-radius:22px;border:1.5px solid var(--line);background:none;color:var(--ink);cursor:pointer;white-space:nowrap}
-.ctrl button:hover{border-color:var(--teal)}
-.ctrl button:focus-visible,#jump:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
-.ctrl button.main{background:var(--navy);border-color:var(--navy);color:#fff}
-#jump{flex:1;accent-color:var(--teal);height:44px}
-.ctrl{padding-bottom:max(10px,env(safe-area-inset-bottom))}
-@media(max-width:600px){.top{padding-block:8px}.top img{width:32px;height:32px}.top span{display:none}.ctrl{gap:8px;padding-inline:12px}.ctrl .sum{display:none}.ctrl button{padding:0 14px}}
-@media(max-width:380px){.ctrl .lbl{display:none}.ctrl button{min-width:44px;padding:0 12px;font-size:18px}}
-/* page content, sized in em from the page width */
-.pg{position:absolute;inset:0;padding:1.9em 1.8em 1.3em;display:flex;flex-direction:column}
-.pfoot{margin-top:auto;flex:none;display:flex;justify-content:space-between;align-items:center;font-size:.72em;color:#5b6c92;border-top:1px solid #e1e8f3;padding-top:.6em}
-.pfoot b{color:var(--navy);font-family:Montserrat,sans-serif}
-.ill{position:relative;flex:0 0 42%;border-radius:1em;background:linear-gradient(155deg,#eef9fc,#d5ebf6);overflow:hidden}
-.ill svg{position:absolute;inset:0;width:100%;height:100%}
-.ill img.foto{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#fff;z-index:0}
-.cat{box-shadow:0 .1em .5em rgba(0,20,60,.25)}
-.cat{position:absolute;left:.8em;top:.8em;z-index:1;background:#fff;color:var(--navy);font-weight:700;font-size:.72em;padding:.3em .8em;border-radius:2em}
-h2{font:800 1.55em/1.08 Montserrat,sans-serif;letter-spacing:-.02em;color:var(--navy);margin:.75em 0 .3em;text-wrap:balance}
-.lede{margin:0 0 .7em;font-size:.92em;color:#33476f}
-ul.spec{list-style:none;padding:0;margin:0;display:grid;gap:.3em;font-size:.86em}
-ul.spec li{position:relative;padding-left:1.35em}
-ul.spec li::before{content:"";position:absolute;left:0;top:.38em;width:.75em;height:.75em;background:linear-gradient(var(--teal),var(--teal)) center/100% 32% no-repeat,linear-gradient(var(--teal),var(--teal)) center/32% 100% no-repeat}
-.vl{font-size:.72em;font-weight:700;color:#5b6c92;margin:.9em 0 .35em}
-.vars{display:flex;flex-wrap:wrap;gap:.4em}
-.var{border:.12em solid var(--teal);border-radius:2em;padding:.2em .75em;font-weight:700;font-size:.8em;color:var(--navy);white-space:nowrap}
-.var i{display:inline-block;width:.75em;height:.75em;border-radius:50%;margin-right:.35em;vertical-align:-.05em}
-/* cover and back */
-.cover{background:radial-gradient(120% 80% at 70% 20%,#1d64d6 0%,#0d2a6e 55%,#061844 100%);color:#fff;align-items:center;text-align:center;padding-top:2.6em}
-.cover .logo{width:66%;border-radius:50%;box-shadow:0 .6em 2em rgba(0,0,0,.35)}
-.cover h1{font:800 2.15em/1.05 Montserrat,sans-serif;letter-spacing:-.02em;margin:.9em 0 .25em}
-.cover p{margin:0;color:#9fe9ec;font-weight:600;font-size:.95em}
-.cover .ecg{position:absolute;left:0;right:0;bottom:12%;height:16%;opacity:.55}
-.cover .ed{margin-top:auto;font-size:.75em;color:#c9d6f3;position:relative}
-.backc{justify-content:center}
-.backc .logo{width:44%}
-.backc .tag{font:italic 500 1.2em/1.3 Mulish,sans-serif;color:#fff;margin-top:1.2em}
-/* text pages */
-.kick{font-weight:700;color:var(--teal);font-size:.85em;margin:0}
-.big{font:800 1.9em/1.05 Montserrat,sans-serif;letter-spacing:-.02em;color:var(--navy);margin:.2em 0 .5em;text-wrap:balance}
-.body{font-size:.9em;color:#2b3f68;margin:0 0 .8em}
-.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.6em;margin:.4em 0 1em}
-.stats div{background:#eef6fb;border-radius:.8em;padding:.6em .6em}
-.stats b{display:block;font:800 1.7em/1 Montserrat,sans-serif;color:var(--blue)}
-.stats span{font-size:.7em;line-height:1.3;display:block;margin-top:.3em;color:#40557e}
-.toc{list-style:none;margin:0;padding:0}
-.toc li{border-bottom:1px solid #e1e8f3}
-.toc a{display:flex;align-items:baseline;gap:.6em;padding:.36em 0;color:#10224f;text-decoration:none;font-size:.9em}
-.toc a:hover{color:var(--blue)}
-.toc .c{font-size:.75em;color:#6a7aa0;margin-left:auto;white-space:nowrap}
-.toc .n{font:800 1em Montserrat,sans-serif;color:var(--teal);width:1.6em;flex:none}
-.grp{font-size:.72em;font-weight:700;color:#5b6c92;margin:.8em 0 .1em}
-.steps{list-style:none;margin:0;padding:0;display:grid;gap:.9em}
-.steps li{display:grid;grid-template-columns:2.2em minmax(0,1fr);gap:.7em;align-items:start;font-size:.88em;color:#2b3f68}
-.steps li>b{display:grid;place-items:center;width:2.2em;height:2.2em;border-radius:50%;background:var(--navy);color:#fff;font:800 1em Montserrat,sans-serif}
-.steps strong{display:block;color:var(--navy);font-size:1.05em}
-.band{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;border-radius:1em;padding:.9em 1.1em;margin-top:auto;margin-bottom:.8em;font-size:.85em}
-.band b{color:#9fe9ec}
-.contact{display:grid;gap:.6em;margin:.4em 0}
-.contact div{display:grid;grid-template-columns:6.5em minmax(0,1fr);gap:.5em;padding:.65em .8em;background:#eef6fb;border-radius:.7em;font-size:.88em}
-.contact span{color:#5b6c92}
-.contact strong{color:var(--navy);overflow-wrap:anywhere}
-.note{font-size:.7em;color:#7a88a8;margin:.6em 0 0}
-@media(prefers-reduced-motion:reduce){.leaf,#book{transition:none!important}}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Catálogo MCKMED</title>
+  <link rel="icon" type="image/jpeg" href="logo.jpg">
+  <link rel="apple-touch-icon" href="logo.jpg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Mulish:ital,wght@0,400;0,600;0,700;1,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/catalogo.css?v=3">
 </head>
 <body>
-<header class="top"><img src="logo.jpg" alt="Logo MCKMED"><b>MCKMED</b><span>Catálogo de produtos</span><div class="ind" id="ind">Capa</div></header>
-<main id="stage" aria-label="Catálogo folheável"><div id="book"></div></main>
-<nav class="ctrl">
-<button id="prev" aria-label="Página anterior">‹<span class="lbl"> Anterior</span></button>
-<button class="sum" id="sum">Sumário</button>
-<input type="range" id="jump" min="0" max="6" value="0" aria-label="Ir para a página">
-<button id="next" class="main" aria-label="Próxima página"><span class="lbl">Próxima </span>›</button>
-</nav>
-<script>
-{
-const T='#13bfc3',N='#0d2a6e',B='#1a5fd0';
-const tube=(d,w=9)=>`<path d="${d}" fill="none" stroke="#b9dbe8" stroke-width="${w}" stroke-linecap="round"/><path d="${d}" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".8"/>`;
-const shadow=(cx,cy,rx)=>`<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${rx*.09}" fill="#0d2a6e" opacity=".12"/>`;
-const ridges=(x,y,h,n,gap)=>Array.from({length:n},(_,i)=>`<rect x="${x+i*gap}" y="${y}" width="2" height="${h}" fill="#fff" opacity=".55"/>`).join('');
+  <header class="top">
+    <img src="logo.jpg" alt="Logo MCKMED">
+    <b>MCKMED</b>
+    <span>Catálogo de produtos</span>
+    <div class="ind" id="ind">Capa</div>
+  </header>
 
-const svgPolifix=`<svg viewBox="0 0 400 260" preserveAspectRatio="xMidYMid meet">${shadow(205,238,170)}
-${tube('M88 130 H178')}${tube('M205 124 C240 124 245 80 280 80 H332')}${tube('M205 136 C240 136 245 180 280 180 H332')}
-<rect x="28" y="116" width="62" height="28" rx="6" fill="${B}"/>${ridges(36,118,24,6,8)}<rect x="18" y="124" width="14" height="12" rx="3" fill="#7fa9e6"/>
-<path d="M172 118 L210 112 L214 148 L172 142 Z" fill="#e8f4f8" stroke="#8fb8c9" stroke-width="2" stroke-linejoin="round"/>
-${[80,180].map(y=>`<g><rect x="290" y="${y-16}" width="22" height="32" rx="5" fill="#fff" stroke="#9cb3c8" stroke-width="2"/><path d="M294 ${y-10} L308 ${y} L294 ${y+10}" fill="none" stroke="${N}" stroke-width="3" stroke-linejoin="round"/>
-<rect x="330" y="${y-13}" width="30" height="26" rx="5" fill="#eaf6fa" stroke="#8fb8c9" stroke-width="2"/><rect x="358" y="${y-15}" width="24" height="30" rx="6" fill="${T}"/>${ridges(363,y-13,26,3,6)}</g>`).join('')}
-</svg>`;
+  <main id="stage" aria-label="Catálogo folheável"></main>
 
-const glove=`<g fill="#f4e7c9" stroke="#d6bf91" stroke-width="2.5" stroke-linejoin="round">
-<rect x="132" y="32" width="26" height="100" rx="13" transform="rotate(-8 145 130)"/><rect x="161" y="18" width="26" height="110" rx="13"/><rect x="190" y="26" width="26" height="104" rx="13" transform="rotate(5 203 130)"/><rect x="218" y="52" width="23" height="84" rx="11.5" transform="rotate(12 229 136)"/>
-<rect x="88" y="118" width="26" height="86" rx="13" transform="rotate(-48 101 190)"/>
-<rect x="128" y="102" width="112" height="106" rx="34"/><rect x="142" y="196" width="86" height="48" rx="8"/></g>
-<path d="M150 214 H220" stroke="#e3cfa4" stroke-width="2"/>`;
-const svgLuva=`<svg viewBox="0 0 400 260" preserveAspectRatio="xMidYMid meet">${shadow(210,246,170)}
-<g transform="translate(232 54)"><rect width="140" height="188" rx="8" fill="#fff" stroke="#c4d3e5" stroke-width="2"/><rect width="140" height="46" rx="8" fill="${N}"/><rect y="38" width="140" height="8" fill="${N}"/>
-<rect x="14" y="16" width="70" height="8" rx="4" fill="#fff" opacity=".9"/><rect x="14" y="62" width="90" height="7" rx="3.5" fill="#c9d7ea"/><rect x="14" y="76" width="64" height="7" rx="3.5" fill="#c9d7ea"/>
-<circle cx="104" cy="140" r="26" fill="${T}"/><text x="104" y="148" text-anchor="middle" font-family="Montserrat,sans-serif" font-weight="800" font-size="22" fill="#fff">7,5</text></g>
-${glove}</svg>`;
+  <nav class="ctrl">
+    <button id="prev" aria-label="Página anterior">‹<span class="lbl"> Anterior</span></button>
+    <button class="sum" id="sum">Sumário</button>
+    <input type="range" id="jump" min="0" max="6" value="0" aria-label="Ir para a página">
+    <button id="next" class="main" aria-label="Próxima página"><span class="lbl">Próxima </span>›</button>
+  </nav>
 
-const jelco=(y,c,lab)=>`<g>${shadow(200,y+34,165)}
-<path d="M28 ${y} L48 ${y-3} H160 V${y+3} H48 Z" fill="#cfd8df"/><rect x="48" y="${y-5}" width="114" height="10" rx="3" fill="#eef6fa" stroke="#a9c3d2" stroke-width="1.5"/>
-<path d="M160 ${y-9} L178 ${y-16} H214 V${y+16} H178 L160 ${y+9} Z" fill="${c}"/><rect x="186" y="${y-16}" width="3" height="32" fill="#fff" opacity=".45"/>
-<rect x="214" y="${y-14}" width="86" height="28" rx="5" fill="#e6f3f8" fill-opacity=".85" stroke="#9fbfcf" stroke-width="2"/><rect x="214" y="${y-2}" width="86" height="4" fill="#b9c6cf"/>
-<rect x="300" y="${y-11}" width="22" height="22" rx="4" fill="#fff" stroke="#9fbfcf" stroke-width="2"/><rect x="322" y="${y-8}" width="10" height="16" rx="3" fill="${c}"/>
-<text x="350" y="${y+9}" font-family="Montserrat,sans-serif" font-weight="800" font-size="26" fill="${N}">${lab}</text></g>`;
-const svgJelco=`<svg viewBox="0 0 400 260" preserveAspectRatio="xMidYMid meet">${jelco(84,'#ec5f9e','20G')}${jelco(172,'#2f7be6','22G')}</svg>`;
-
-const port=(x,y,w,h)=>`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6" fill="#eaf6fa" stroke="#8fb8c9" stroke-width="2"/>`;
-const svgTorneira=`<svg viewBox="0 0 400 260" preserveAspectRatio="xMidYMid meet">${shadow(200,246,150)}
-${port(78,122,110,32)}${port(212,122,110,32)}${port(184,150,32,74)}
-<rect x="52" y="118" width="32" height="40" rx="7" fill="${B}"/>${ridges(58,120,36,3,9)}<rect x="316" y="118" width="32" height="40" rx="7" fill="#fff" stroke="#8fb8c9" stroke-width="2"/><rect x="180" y="218" width="40" height="24" rx="7" fill="#fff" stroke="#8fb8c9" stroke-width="2"/>
-<circle cx="200" cy="138" r="38" fill="#f2fafd" stroke="#8fb8c9" stroke-width="2.5"/>
-<g stroke="${B}" stroke-width="20" stroke-linecap="round"><path d="M200 138 V58"/><path d="M200 138 H128"/><path d="M200 138 H272"/></g>
-<circle cx="200" cy="138" r="20" fill="${N}"/><circle cx="200" cy="138" r="7" fill="${T}"/><path d="M190 70 L200 52 L210 70 Z" fill="#fff"/></svg>`;
-
-const elec=(x,y)=>`<g>${shadow(x,y+70,62)}<circle cx="${x}" cy="${y}" r="60" fill="#fff" stroke="#c9d8e6" stroke-width="2.5"/><circle cx="${x}" cy="${y}" r="52" fill="none" stroke="#e5eef5" stroke-width="2" stroke-dasharray="3 5"/>
-<circle cx="${x}" cy="${y}" r="26" fill="#bfe8ef"/><circle cx="${x}" cy="${y}" r="13" fill="#9aa6b1"/><circle cx="${x}" cy="${y}" r="8" fill="#d7dde3"/><circle cx="${x-3}" cy="${y-3}" r="3" fill="#fff"/></g>`;
-const svgEletrodo=`<svg viewBox="0 0 400 260" preserveAspectRatio="xMidYMid meet">
-<rect x="46" y="70" width="308" height="140" rx="14" fill="${N}" opacity=".9"/><path d="M60 140 H120 L132 112 L146 170 L158 140 H340" fill="none" stroke="${T}" stroke-width="3" opacity=".7"/>
-${elec(124,140)}${elec(276,140)}</svg>`;
-
-const svgEquipo=`<svg viewBox="0 0 400 260" preserveAspectRatio="xMidYMid meet">${shadow(210,248,175)}
-<path d="M62 18 L70 6 L78 18 V54 H62 Z" fill="#fff" stroke="#8fb8c9" stroke-width="2"/><rect x="56" y="50" width="28" height="10" rx="3" fill="${B}"/>
-<rect x="42" y="58" width="56" height="96" rx="14" fill="#e6f3f8" fill-opacity=".9" stroke="#8fb8c9" stroke-width="2.5"/><path d="M44 128 H96 V140 a12 12 0 0 1 -12 12 H56 a12 12 0 0 1 -12 -12 Z" fill="#a9e3ea"/>
-<path d="M70 82 q-6 9 0 13 q6 -4 0 -13" fill="${T}"/>
-${tube('M70 154 V196 C70 226 96 230 126 230 H214 C256 230 252 150 292 150 H332',8)}
-<g transform="translate(148 214)"><rect width="50" height="32" rx="6" fill="#fff" stroke="#9cb3c8" stroke-width="2"/><circle cx="25" cy="10" r="8" fill="${B}"/>${ridges(19,6,8,3,5)}</g>
-<rect x="282" y="140" width="20" height="20" rx="4" fill="#eaf6fa" stroke="#8fb8c9" stroke-width="2"/><path d="M292 140 V112" stroke="#b9dbe8" stroke-width="10" stroke-linecap="round"/><rect x="282" y="98" width="20" height="18" rx="5" fill="${T}"/>
-<rect x="330" y="137" width="32" height="26" rx="5" fill="${B}"/>${ridges(336,139,22,3,8)}<rect x="360" y="141" width="18" height="18" rx="4" fill="#fff" stroke="#8fb8c9" stroke-width="2"/></svg>`;
-
-const ecgCover=`<svg class="ecg" viewBox="0 0 400 60" preserveAspectRatio="none"><path d="M0 34 H130 L146 12 L160 52 L172 34 H230 C246 34 250 24 262 24 S278 34 290 34 H400" fill="none" stroke="${T}" stroke-width="3" vector-effect="non-scaling-stroke"/></svg>`;
-
-const foot=(n,label)=>`<div class="pfoot"><b>MCKMED</b><span>${label}</span><span>${n}</span></div>`;
-const prod=(n,cat,title,lede,svg,specs,vl,vars,foto)=>`<div class="pg"><div class="ill"><span class="cat">${cat}</span>${svg}${foto?`<img class="foto" src="fotos/${foto}" alt="${title}" onerror="this.remove()">`:''}</div>
-<h2>${title}</h2><p class="lede">${lede}</p><ul class="spec">${specs.map(s=>`<li>${s}</li>`).join('')}</ul>
-${vars?`<p class="vl">${vl}</p><div class="vars">${vars.map(v=>`<span class="var">${v}</span>`).join('')}</div>`:''}${foot(n,cat)}</div>`;
-
-const items=[
- {p:3,name:'Polifix 2 vias',cat:'Infusão'},
- {p:4,name:'Luva cirúrgica estéril',cat:'Proteção'},
- {p:5,name:'Cateter jelco 20G e 22G',cat:'Acesso venoso'},
- {p:6,name:'Torneirinha 3 vias',cat:'Infusão'},
- {p:7,name:'Eletrodo para ECG',cat:'Monitorização'},
- {p:8,name:'Equipo macrogotas',cat:'Infusão'}];
-
-const P=[
-`<div class="pg cover"><img class="logo" src="logo.jpg" alt="MCKMED">${ecgCover}<h1>Catálogo de produtos</h1><p>Materiais hospitalares descartáveis</p><span class="ed">Edição 2026</span></div>`,
-
-`<div class="pg"><p class="kick">Apresentação</p><p class="big">Comércio de produtos hospitalares e médicos</p>
-<p class="body">A MCKMED reúne os materiais de uso diário em hospitais, clínicas e serviços de saúde: infusão, acesso venoso, monitorização e proteção.</p>
-<p class="body">Cada página traz o produto, sua especificação e as opções disponíveis, para facilitar a escolha e o pedido.</p>
-<div class="stats"><div><b>6</b><span>linhas de produtos</span></div><div><b>10</b><span>opções entre tamanhos, calibres e conexões</span></div><div><b>4</b><span>áreas de uso</span></div></div>
-<div class="band"><b>Qualidade, confiança</b> e saúde em cada detalhe.</div>${foot(2,'Apresentação')}</div>`,
-
-`<div class="pg"><p class="kick">Sumário</p><p class="big">Nossos produtos</p>
-${['Infusão','Acesso venoso','Monitorização','Proteção'].map(g=>`<p class="grp">${g}</p><ul class="toc">${items.filter(i=>i.cat===g).map(i=>`<li><a href="#" data-p="${i.p}"><span class="n">${i.p+1}</span>${i.name}<span class="c">pág. ${i.p+1}</span></a></li>`).join('')}</ul>`).join('')}
-<p class="grp">Informações</p><ul class="toc"><li><a href="#" data-p="9"><span class="n">10</span>Como fazer seu pedido<span class="c">pág. 10</span></a></li><li><a href="#" data-p="10"><span class="n">11</span>Contato<span class="c">pág. 11</span></a></li></ul>
-${foot(3,'Sumário')}</div>`,
-
-prod(4,'Infusão','Polifix 2 vias com clamp','Extensor multivias que permite duas linhas de infusão em um único acesso venoso, com controle independente de cada via.',svgPolifix,
- ['Duas vias com clamp individual','Conexão luer lock','Estéril, descartável, uso único','Venda por unidade'],'Comprimento',['Informado na proposta'],'polifix.jpg'),
-
-prod(5,'Proteção','Luva cirúrgica estéril de látex','Embalada aos pares para procedimentos com técnica asséptica. Fornecida em caixa.',svgLuva,
- ['Látex natural, estéril','Embalagem individual por par','Versões com ou sem pó, conforme o lote','Venda por caixa'],'Tamanhos',['7,0','7,5','8,0'],'luva.jpg'),
-
-prod(6,'Acesso venoso','Cateter intravenoso periférico (jelco)','Cateter sobre agulha para punção venosa periférica. A cor do canhão identifica o calibre.',svgJelco,
- ['Sem dispositivo de segurança','Estéril, descartável, uso único','Venda por unidade'],'Calibres',['<i style="background:#ec5f9e"></i>20G rosa','<i style="background:#2f7be6"></i>22G azul'],'jelco.jpg'),
-
-prod(7,'Infusão','Torneirinha 3 vias','Válvula para direcionar o fluxo entre linhas de infusão, medicações e coletas, sem desconectar o acesso.',svgTorneira,
- ['Manopla giratória para abrir ou fechar cada via','Estéril, descartável, uso único','Venda por unidade'],'Conexão',['Luer lock','Luer slip'],'torneirinha.jpg'),
-
-prod(8,'Monitorização','Eletrodo descartável para ECG','Eletrodo adulto com gel condutor para monitorização cardíaca e exames de eletrocardiograma.',svgEletrodo,
- ['Uso adulto, com gel condutor','Adesivo para fixação na pele','Conector de pressão para cabos de ECG','Venda por unidade, em pacotes'],'',null,'eletrodo.jpg'),
-
-prod(9,'Infusão','Equipo macrogotas com injetor lateral','Para administração de soluções por gravidade, com controle do gotejamento pela pinça rolete.',svgEquipo,
- ['Macrogotas: 20 gotas por mL','Câmara gotejadora e pinça rolete','Injetor lateral para medicação','Estéril, descartável, uso único'],'Conexão',['Luer lock','Luer slip'],'equipo.jpg'),
-
-`<div class="pg"><p class="kick">Pedidos</p><p class="big">Como fazer seu pedido</p>
-<ol class="steps"><li><b>1</b><div><strong>Escolha os produtos</strong>Use o sumário para encontrar o item, o tamanho, o calibre ou a conexão.</div></li>
-<li><b>2</b><div><strong>Informe as quantidades</strong>Luvas são vendidas por caixa; os demais itens, por unidade.</div></li>
-<li><b>3</b><div><strong>Receba a proposta</strong>Enviamos preço, prazo de entrega e condições de pagamento.</div></li>
-<li><b>4</b><div><strong>Confirme e receba</strong>Após a confirmação, o pedido segue para separação e entrega.</div></li></ol>
-<div class="band">Dúvida sobre qual opção usar? <b>Fale com a nossa equipe</b> antes de fechar o pedido.</div>${foot(10,'Pedidos')}</div>`,
-
-`<div class="pg"><p class="kick">Contato</p><p class="big">Solicite seu orçamento</p>
-<p class="body">Envie a lista de produtos e quantidades pelo canal que preferir.</p>
-<div class="contact"><div><span>WhatsApp</span><strong>(11) 96904-5009</strong></div><div><span>E-mail</span><strong>michel@mckmed.com.br</strong></div><div><span>Atendimento</span><strong>Segunda a sexta, 8h às 18h</strong></div><div><span>Instagram</span><strong>@mckmed</strong></div></div>
-${foot(11,'Contato')}</div>`,
-
-`<div class="pg cover backc"><img class="logo" src="logo.jpg" alt="MCKMED"><p class="tag">Qualidade, confiança<br>e saúde em cada detalhe.</p>${ecgCover}</div>`
-];
-
-const stage=document.getElementById('stage'),book=document.getElementById('book'),ind=document.getElementById('ind'),jump=document.getElementById('jump');
-let spread=false,pw=0,ph=0,L=0,t=0,page=0,leaves=[],timers=[];
-const RATIO=1.38;
-
-function build(){
- const W=stage.clientWidth,H=stage.clientHeight;
- const hp=Math.max(200,(H-32)/RATIO);
- const sp=Math.min(hp,(W-48)/2);
- const nsp=sp>=300;
- const npw=Math.floor(nsp?sp:Math.min(hp,W-24));
- // on a phone the single page grows taller to fill the screen, so the text can be larger
- const nph=Math.round(nsp?npw*RATIO:Math.min(H-24,npw*1.8));
- if(nsp===spread&&npw===pw&&nph===ph&&leaves.length)return;
- spread=nsp;pw=npw;ph=nph;
- book.style.width=(spread?pw*2:pw)+'px';book.style.height=ph+'px';book.style.fontSize=(spread?pw/26:Math.min(pw/24,ph/RATIO/26))+'px';
- book.innerHTML='';leaves=[];
- L=spread?P.length/2:P.length;
- for(let i=0;i<L;i++){
-  const lf=document.createElement('div');lf.className='leaf';
-  lf.style.cssText=`left:${spread?pw:0}px;width:${pw}px;height:${ph}px;transition:none`;
-  const f=spread?P[2*i]:P[i],b=spread?P[2*i+1]:'';
-  lf.innerHTML=`<div class="face front${spread&&i>0?' r':''}">${f}</div><div class="face back${b?' l':' blank'}">${b}</div>`;
-  book.appendChild(lf);leaves.push(lf);
- }
- t=spread?Math.ceil(page/2):page;
- jump.max=spread?L:L-1;
- update(true);
- requestAnimationFrame(()=>requestAnimationFrame(()=>leaves.forEach(l=>l.style.transition='')));
-}
-function z(i){return i<t?i+1:2*L-i}
-function update(instant){
- leaves.forEach((l,i)=>{l.style.transform=i<t?'rotateY(-180deg)':'rotateY(0deg)';if(instant)l.style.zIndex=z(i)});
- book.style.transform=spread?(t===0?`translateX(${-pw/2}px)`:t===L?`translateX(${pw/2}px)`:'none'):'none';
- jump.value=t;
- ind.textContent=spread?(t===0?'Capa':t===L?'Contracapa':`Páginas ${2*t}–${2*t+1} de ${P.length}`):`Página ${t+1} de ${P.length}`;
- document.getElementById('prev').disabled=t===0;
- document.getElementById('next').disabled=t===(spread?L:L-1);
-}
-function go(nt){
- nt=Math.max(0,Math.min(spread?L:L-1,nt));if(nt===t)return;
- const fwd=nt>t,a=Math.min(t,nt),b=Math.max(t,nt),k=b-a;
- timers.forEach(clearTimeout);timers=[];
- const old=t;t=nt;page=spread?Math.max(0,2*t-1):t;
- for(let j=0;j<k;j++){
-  const i=fwd?old+j:old-1-j,lf=leaves[i],d=k>1?j*90:0;
-  lf.style.zIndex=3*L+j;lf.style.transitionDelay=d+'ms';
- }
- update(false);
- timers.push(setTimeout(()=>leaves.forEach((l,i)=>{l.style.zIndex=z(i);l.style.transitionDelay='0ms'}),950+k*90));
-}
-const toPage=p=>go(spread?Math.ceil(p/2):p);
-
-document.getElementById('prev').onclick=()=>go(t-1);
-document.getElementById('next').onclick=()=>go(t+1);
-document.getElementById('sum').onclick=()=>toPage(2);
-jump.oninput=()=>go(+jump.value);
-document.addEventListener('keydown',e=>{if(e.key==='ArrowRight')go(t+1);else if(e.key==='ArrowLeft')go(t-1)});
-let sx=null,swiped=false;
-stage.addEventListener('pointerdown',e=>{sx=e.clientX;swiped=false});
-stage.addEventListener('pointerup',e=>{if(sx===null)return;const dx=e.clientX-sx;sx=null;if(Math.abs(dx)>40){swiped=true;go(dx<0?t+1:t-1)}});
-book.addEventListener('click',e=>{
- if(swiped)return;
- const a=e.target.closest('a[data-p]');
- if(a){e.preventDefault();toPage(+a.dataset.p);return}
- const r=stage.getBoundingClientRect(),x=e.clientX-r.left;
- if(spread)go(x<r.width/2?t-1:t+1);else go(x<r.width*.35?t-1:t+1);
-});
-const ro=new ResizeObserver(()=>build());ro.observe(stage);
-build();
-}
-</script>
+  <!-- a ordem importa: biblioteca → dados → páginas → livro -->
+  <script src="js/vendor/page-flip.browser.js?v=3"></script>
+  <script src="js/ilustracoes.js?v=3"></script>
+  <script src="js/produtos.js?v=3"></script>
+  <script src="js/paginas.js?v=3"></script>
+  <script src="js/livro.js?v=3"></script>
 </body>
 </html>

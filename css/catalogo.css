@@ -1,0 +1,221 @@
+/* =========================================================
+   Catálogo MCKMED
+   Cores: azul-marinho #0d2a6e, azul #1a5fd0, turquesa #13bfc3
+   Fontes: Montserrat (títulos) + Mulish (texto)
+   ========================================================= */
+
+/* ---------- Variáveis e tema claro/escuro ---------- */
+:root {
+  color-scheme: light dark;
+  --bg:   light-dark(#dfe7f1, #0a1330);
+  --ink:  light-dark(#10224f, #e6edf8);
+  --bar:  light-dark(#ffffff, #121d44);
+  --line: light-dark(#c9d5e6, #26346a);
+  --navy: #0d2a6e;
+  --blue: #1a5fd0;
+  --teal: #13bfc3;
+}
+:root[data-theme=light] { color-scheme: light; }
+:root[data-theme=dark]  { color-scheme: dark; }
+
+/* ---------- Base ---------- */
+* { box-sizing: border-box; min-width: 0; }
+html, body { height: 100%; margin: 0; }
+body {
+  height: 100dvh;
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.5 Mulish, system-ui, sans-serif;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  overflow: hidden;
+}
+
+/* ---------- Barra superior ---------- */
+.top {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px max(16px, 3vw);
+  background: var(--bar);
+  border-bottom: 1px solid var(--line);
+}
+.top img  { width: 38px; height: 38px; border-radius: 50%; }
+.top b    { font: 800 17px/1 Montserrat, sans-serif; color: light-dark(var(--navy), #fff); }
+.top span { font-size: 14px; opacity: .75; }
+.top .ind { margin-left: auto; font-weight: 700; font-size: 14px; white-space: nowrap; }
+
+/* ---------- Livro e folhas ---------- */
+#stage {
+  position: relative; display: grid; place-items: center;
+  overflow: hidden; touch-action: pan-y; user-select: none;
+}
+/* o livro: o tamanho é calculado em js/livro.js */
+#book { position: relative; flex: none; transition: transform .7s ease; }
+#book .stf__wrapper { height: 100%; }
+
+/* cada página */
+/* contain: nada de dentro da página pode "vazar" para fora dela */
+.page { background: #fff; color: #10224f; overflow: hidden; contain: layout paint; cursor: grab; }
+.page:active { cursor: grabbing; }
+/* sombra da lombada (dobra do meio do livro) */
+.page::after { content: ""; position: absolute; inset: 0; pointer-events: none; }
+.page.--right::after { background: linear-gradient(90deg,  rgba(0,20,60,.16), rgba(0,20,60,.04) 4%, rgba(0,20,60,0) 9%); }
+.page.--left::after  { background: linear-gradient(270deg, rgba(0,20,60,.18), rgba(0,20,60,.05) 4%, rgba(0,20,60,0) 9%); }
+.page-capa::after, #book .--portrait .page::after { display: none; }
+/* os spans dentro dos links do sumário não podem "roubar" o clique */
+.toc a * { pointer-events: none; }
+
+/* ---------- Barra de controles ---------- */
+.ctrl {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px max(16px, 3vw);
+  padding-bottom: max(10px, env(safe-area-inset-bottom));
+  background: var(--bar);
+  border-top: 1px solid var(--line);
+}
+.ctrl button {
+  font: 700 15px Mulish, sans-serif;
+  min-height: 44px; padding: 0 16px; border-radius: 22px;
+  border: 1.5px solid var(--line); background: none; color: var(--ink);
+  cursor: pointer; white-space: nowrap;
+}
+.ctrl button:hover { border-color: var(--teal); }
+.ctrl button:focus-visible, #jump:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
+.ctrl button.main { background: var(--navy); border-color: var(--navy); color: #fff; }
+#jump { flex: 1; accent-color: var(--teal); height: 44px; }
+
+@media (max-width: 600px) {
+  .top { padding-block: 8px; }
+  .top img { width: 32px; height: 32px; }
+  .top span { display: none; }
+  .ctrl { gap: 8px; padding-inline: 12px; }
+  .ctrl .sum { display: none; }
+  .ctrl button { padding: 0 14px; }
+}
+@media (max-width: 380px) {
+  .ctrl .lbl { display: none; }
+  .ctrl button { min-width: 44px; padding: 0 12px; font-size: 18px; }
+}
+
+/* =========================================================
+   Conteúdo das páginas (medidas em em, proporcionais à página)
+   ========================================================= */
+.pg { position: absolute; inset: 0; padding: 1.9em 1.8em 1.3em; display: flex; flex-direction: column; }
+.pfoot {
+  margin-top: auto; flex: none;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: .72em; color: #5b6c92;
+  border-top: 1px solid #e1e8f3; padding-top: .6em;
+}
+.pfoot b { color: var(--navy); font-family: Montserrat, sans-serif; }
+
+/* ---------- Página de produto ---------- */
+.ill {
+  position: relative; flex: 0 0 42%;
+  border-radius: 1em; overflow: hidden;
+  background: linear-gradient(155deg, #eef9fc, #d5ebf6);
+}
+.ill svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+/* a foto cobre a ilustração; se faltar, a ilustração aparece */
+.ill img.foto {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: contain; background: #fff; z-index: 0;
+}
+.cat {
+  position: absolute; left: .8em; top: .8em; z-index: 1;
+  background: #fff; color: var(--navy);
+  font-weight: 700; font-size: .72em;
+  padding: .3em .8em; border-radius: 2em;
+  box-shadow: 0 .1em .5em rgba(0, 20, 60, .25);
+}
+h2 {
+  font: 800 1.55em/1.08 Montserrat, sans-serif; letter-spacing: -.02em;
+  color: var(--navy); margin: .75em 0 .3em; text-wrap: balance;
+}
+.lede { margin: 0 0 .7em; font-size: .92em; color: #33476f; }
+ul.spec { list-style: none; padding: 0; margin: 0; display: grid; gap: .3em; font-size: .86em; }
+ul.spec li { position: relative; padding-left: 1.35em; }
+ul.spec li::before { /* cruz turquesa */
+  content: ""; position: absolute; left: 0; top: .38em; width: .75em; height: .75em;
+  background:
+    linear-gradient(var(--teal), var(--teal)) center / 100% 32% no-repeat,
+    linear-gradient(var(--teal), var(--teal)) center / 32% 100% no-repeat;
+}
+.vl   { font-size: .72em; font-weight: 700; color: #5b6c92; margin: .9em 0 .35em; }
+.vars { display: flex; flex-wrap: wrap; gap: .4em; }
+.var {
+  border: .12em solid var(--teal); border-radius: 2em;
+  padding: .2em .75em; font-weight: 700; font-size: .8em;
+  color: var(--navy); white-space: nowrap;
+}
+.var i { display: inline-block; width: .75em; height: .75em; border-radius: 50%; margin-right: .35em; vertical-align: -.05em; }
+
+/* ---------- Capa e contracapa ---------- */
+.cover {
+  background: radial-gradient(120% 80% at 70% 20%, #1d64d6 0%, #0d2a6e 55%, #061844 100%);
+  color: #fff; align-items: center; text-align: center; padding-top: 2.6em;
+}
+.cover .logo { width: 66%; border-radius: 50%; box-shadow: 0 .6em 2em rgba(0, 0, 0, .35); }
+.cover h1 { font: 800 2.15em/1.05 Montserrat, sans-serif; letter-spacing: -.02em; margin: .9em 0 .25em; }
+.cover p { margin: 0; color: #9fe9ec; font-weight: 600; font-size: .95em; }
+.cover .ecg { position: absolute; left: 0; right: 0; bottom: 12%; height: 16%; opacity: .55; }
+.cover .ed { margin-top: auto; font-size: .75em; color: #c9d6f3; position: relative; }
+.backc { justify-content: center; }
+.backc .logo { width: 44%; }
+.backc .tag { font: italic 500 1.2em/1.3 Mulish, sans-serif; color: #fff; margin-top: 1.2em; }
+
+/* ---------- Páginas de texto ---------- */
+.kick { font-weight: 700; color: var(--teal); font-size: .85em; margin: 0; }
+.big {
+  font: 800 1.9em/1.05 Montserrat, sans-serif; letter-spacing: -.02em;
+  color: var(--navy); margin: .2em 0 .5em; text-wrap: balance;
+}
+.body { font-size: .9em; color: #2b3f68; margin: 0 0 .8em; }
+
+.stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .6em; margin: .4em 0 1em; }
+.stats div  { background: #eef6fb; border-radius: .8em; padding: .6em; }
+.stats b    { display: block; font: 800 1.7em/1 Montserrat, sans-serif; color: var(--blue); }
+.stats span { font-size: .7em; line-height: 1.3; display: block; margin-top: .3em; color: #40557e; }
+
+/* sumário */
+.toc { list-style: none; margin: 0; padding: 0; }
+.toc li { border-bottom: 1px solid #e1e8f3; }
+.toc a {
+  display: flex; align-items: baseline; gap: .6em; padding: .36em 0;
+  color: #10224f; text-decoration: none; font-size: .9em;
+}
+.toc a:hover { color: var(--blue); }
+.toc .c { font-size: .75em; color: #6a7aa0; margin-left: auto; white-space: nowrap; }
+.toc .n { font: 800 1em Montserrat, sans-serif; color: var(--teal); width: 1.6em; flex: none; }
+.grp { font-size: .72em; font-weight: 700; color: #5b6c92; margin: .8em 0 .1em; }
+
+/* passo a passo do pedido */
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: .9em; }
+.steps li {
+  display: grid; grid-template-columns: 2.2em minmax(0, 1fr); gap: .7em; align-items: start;
+  font-size: .88em; color: #2b3f68;
+}
+.steps li > b {
+  display: grid; place-items: center; width: 2.2em; height: 2.2em; border-radius: 50%;
+  background: var(--navy); color: #fff; font: 800 1em Montserrat, sans-serif;
+}
+.steps strong { display: block; color: var(--navy); font-size: 1.05em; }
+
+.band {
+  background: linear-gradient(135deg, var(--navy), var(--blue)); color: #fff;
+  border-radius: 1em; padding: .9em 1.1em; margin-top: auto; margin-bottom: .8em; font-size: .85em;
+}
+.band b { color: #9fe9ec; }
+
+/* contato */
+.contact { display: grid; gap: .6em; margin: .4em 0; }
+.contact div {
+  display: grid; grid-template-columns: 6.5em minmax(0, 1fr); gap: .5em;
+  padding: .65em .8em; background: #eef6fb; border-radius: .7em; font-size: .88em;
+}
+.contact span   { color: #5b6c92; }
+.contact strong { color: var(--navy); overflow-wrap: anywhere; }
+.note { font-size: .7em; color: #7a88a8; margin: .6em 0 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  #book { transition: none !important; }
+}
